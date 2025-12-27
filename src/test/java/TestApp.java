@@ -1,5 +1,4 @@
 
-
 import com.simpleweb.MiniWeb;
 import com.simpleweb.Database;
 import java.io.InputStream;
@@ -24,18 +23,16 @@ public class TestApp {
         // 1. DATABASE CONFIGURATION
         // 1. DATABASE CONFIGURATION
         // Cloud: Read from Environment Variables (Render)
-        String dbUrl = System.getenv("DB_URL");
-        String dbUser = System.getenv("DB_USER");
-        String dbPass = System.getenv("DB_PASS");
+        // Replace the placeholder with your REAL Neon URL
+        String dbUrl = "jdbc:postgresql://ep-steep-leaf-a4xzf6wj-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require";
 
-        // Local: Fallback to hardcoded strings if Env Vars are null
-        if (dbUrl == null) {
-            System.out.println("⚠️ Running locally, using hardcoded DB creds...");
-            dbUrl = "jdbc:postgresql://ep-your-url.neon.tech/neondb?sslmode=require";
-            dbUser = "neondb_owner";
-            dbPass = "npg_UsW0hA9ETjbl";
-        }
+// 2. The Username (Keep it clean)
+        String dbUser = "neondb_owner";
 
+// 3. The Password (The one starting with npg_)
+        String dbPass = "npg_UsW0hA9ETjbl";
+
+// 4. Initialize your Database class
         Database db = new Database(dbUrl, dbUser, dbPass);
         MiniWeb app = new MiniWeb(8080);
 
