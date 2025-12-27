@@ -12,7 +12,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 # Copy the built jar from Stage 1
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/miniweb-1.0.jar app.jar
 
 # Open port 8080
 EXPOSE 8080
