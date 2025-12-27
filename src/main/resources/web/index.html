@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MiniWeb User Manager</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { margin-top: 0; color: #333; }
+        input { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .user-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .role { color: #666; font-size: 0.9em; background: #eee; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Add New User</h2>
+    <input type="text" id="nameInput" placeholder="Name (e.g., Akshith)">
+    <input type="text" id="roleInput" placeholder="Role (e.g., Full Stack Dev)">
+    <button onclick="createUser()">Create User</button>
+</div>
+
+<div class="card">
+    <h2>Search Users</h2>
+    <input type="text" id="searchInput" placeholder="Type to search..." onkeyup="searchUsers()">
+</div>
+
+<div class="card">
+    <h2>Current Users</h2>
+    <div id="userList">Loading...</div>
+</div>
+
+<script>
+    const API_URL = "";
+
+    // 1. Fetch Users (With optional search query)
+    async function fetchUsers(query = "") {
+        let url = `${API_URL}/users`;
+
+        // If we have a search term, add it to the URL
+        if (query) {
+            url += `?search=${query}`;
+        }
+
+        const res = await fetch(url);
+        const users = await res.json();
+
+        const list = document.getElementById('userList');
+
+        if (users.length === 0) {
+            list.innerHTML = '<p style="color:#888; text-align:center;">No users found.</p>';
+            return;
+        }
+
+        list.innerHTML = users.map(u => `
+                <div class="user-item">
+                    <strong>${u.name}</strong>
+                    <span class="role">${u.role}</span>
+                </div>
+            `).join('');
+    }
+
+    // 2. Search Function (Called when typing)
+    function searchUsers() {
+        const query = document.getElementById('searchInput').value;
+        fetchUsers(query);
+    }
+
+    // 3. Create User
+    async function createUser() {
+        const name = document.getElementById('nameInput').value;
+        const role = document.getElementById('roleInput').value;
+
+        if(!name || !role) return;
+
+        await fetch(`${API_URL}/users/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, role, id: 0 })
+        });
+
+        document.getElementById('nameInput').value = '';
+        document.getElementById('roleInput').value = '';
+        fetchUsers(); // Refresh list
+    }
+
+    // Load all users on start
+    fetchUsers();
+</script>
+</body>
+</html>
